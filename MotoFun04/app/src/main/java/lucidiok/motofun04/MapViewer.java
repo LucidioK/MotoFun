@@ -11,7 +11,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 /**
  * Created by lucidiok on 10/3/17.
@@ -24,8 +26,11 @@ public class MapViewer implements OnMapReadyCallback {
     private LocationManager         mLocationManager;
     protected LocationListener mLocationListener = new android.location.LocationListener() {
         public void onLocationChanged(Location location) {
+
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            CameraPosition pos = new CameraPosition(latLng, location.getBearing(), mGoogleMap.getCameraPosition().tilt, 15f/*mGoogleMap.getCameraPosition().zoom*/);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
             mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15f));
         }
 
@@ -48,8 +53,11 @@ public class MapViewer implements OnMapReadyCallback {
         try {
             mGoogleMap = googleMap;
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.setTrafficEnabled(true);
+            mGoogleMap.setBuildingsEnabled(false);
+            mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15f));
             mLocationManager = (LocationManager)mAppCompatActivity.getSystemService(Context.LOCATION_SERVICE);
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 50, mLocationListener);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
