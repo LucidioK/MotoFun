@@ -13,15 +13,14 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
-public class MotoFunActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener, OnMapReadyCallback {
+public class MotoFunActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
 
     private TextureView     mTextureView;
     private CameraPreviewer mCameraPreviewer;
     private TextView        mSpeedView;
     private Speedometer     mSpeedometer;
+    private MapViewer       mMapViewer;
 
-    private MapFragment     mMapFragment;
-    private GoogleMap       mGoogleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,24 +37,12 @@ public class MotoFunActivity extends AppCompatActivity implements TextureView.Su
         try {
             mCameraPreviewer = new CameraPreviewer(this, mTextureView);
             mSpeedometer     = new Speedometer(this, mSpeedView);
-            mMapFragment       = (MapFragment) getFragmentManager()
-                    .findFragmentById(R.id.map);
-            mMapFragment.getMapAsync(this);
-            mMapFragment.getView().setAlpha(0.5f);
+            mMapViewer       = new MapViewer(this, R.id.map);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        try {
-            mGoogleMap = googleMap;
-            googleMap.setMyLocationEnabled(true);
-        }catch (SecurityException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) { }
