@@ -1,10 +1,17 @@
 package lucidiok.motofun04;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by lucidiok on 10/3/17.
@@ -14,6 +21,18 @@ public class MapViewer implements OnMapReadyCallback {
     private final AppCompatActivity mAppCompatActivity;
     private MapFragment             mMapFragment;
     private GoogleMap               mGoogleMap;
+    private LocationManager         mLocationManager;
+    protected LocationListener mLocationListener = new android.location.LocationListener() {
+        public void onLocationChanged(Location location) {
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15f));
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) { }
+        public void onProviderEnabled(String provider) { }
+        public void onProviderDisabled(String provider) { }
+    };
 
     public MapViewer(AppCompatActivity appCompatActivity, int mapFragmentId) {
         //super(appCompatActivity);
@@ -29,7 +48,9 @@ public class MapViewer implements OnMapReadyCallback {
         try {
             mGoogleMap = googleMap;
             mGoogleMap.setMyLocationEnabled(true);
-        }catch (SecurityException e) {
+            mLocationManager = (LocationManager)mAppCompatActivity.getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
