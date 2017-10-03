@@ -7,12 +7,21 @@ import android.os.Bundle;
 import android.view.TextureView;
 import android.widget.TextView;
 
-public class MotoFunActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener{
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+
+public class MotoFunActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener, OnMapReadyCallback {
 
     private TextureView     mTextureView;
     private CameraPreviewer mCameraPreviewer;
     private TextView        mSpeedView;
     private Speedometer     mSpeedometer;
+
+    private MapFragment     mMapFragment;
+    private GoogleMap       mGoogleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +30,7 @@ public class MotoFunActivity extends AppCompatActivity implements TextureView.Su
         mSpeedView   = (TextView)findViewById(R.id.speed);
         mTextureView = (TextureView)findViewById(R.id.image);
         mTextureView.setSurfaceTextureListener(this);
+
     }
 
     @Override
@@ -28,7 +38,21 @@ public class MotoFunActivity extends AppCompatActivity implements TextureView.Su
         try {
             mCameraPreviewer = new CameraPreviewer(this, mTextureView);
             mSpeedometer     = new Speedometer(this, mSpeedView);
-        } catch (CameraAccessException e) {
+            mMapFragment       = (MapFragment) getFragmentManager()
+                    .findFragmentById(R.id.map);
+            mMapFragment.getMapAsync(this);
+            mMapFragment.getView().setAlpha(0.5f);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        try {
+            mGoogleMap = googleMap;
+            googleMap.setMyLocationEnabled(true);
+        }catch (SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -43,8 +67,9 @@ public class MotoFunActivity extends AppCompatActivity implements TextureView.Su
     public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) { }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+
         if (mCameraPreviewer != null) {
             try {
                 mCameraPreviewer.Start();
@@ -53,4 +78,5 @@ public class MotoFunActivity extends AppCompatActivity implements TextureView.Su
             }
         }
     }
+
 }
