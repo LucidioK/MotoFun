@@ -115,6 +115,8 @@ public class CameraPreviewer  {
             mCamera = camera;
 
             try {
+
+
                 SurfaceTexture texture = mTextureView.getSurfaceTexture();
                 assert texture != null;
                 texture.setDefaultBufferSize(mImageDimension.getWidth(), mImageDimension.getHeight());
@@ -136,7 +138,9 @@ public class CameraPreviewer  {
 
                     @Override
                     public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                        Toast.makeText(mAppCompatActivity, "Configuration change", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mAppCompatActivity, "Configurat
+
+ion change", Toast.LENGTH_SHORT).show();
                     }
                 }, null);
 

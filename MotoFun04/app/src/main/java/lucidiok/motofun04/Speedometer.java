@@ -16,9 +16,19 @@ import android.widget.TextView;
  */
 
 public class Speedometer  {
-    private AppCompatActivity mAppCompatActivity;
-    private TextView mTextView;
-    private LocationManager mLocationManager;
+
+    public Speedometer(AppCompatActivity appCompatActivity, int textViewId) {
+        mAppCompatActivity = appCompatActivity;
+        mTextView   = (TextView)mAppCompatActivity.findViewById(R.id.speed);
+
+        if (ActivityCompat.checkSelfPermission(mAppCompatActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(mAppCompatActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
+            return;
+        }
+        mLocationManager = (LocationManager)mAppCompatActivity.getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, mLocationListener);
+    }
+
     private LocationListener mLocationListener = new android.location.LocationListener() {
         public void onLocationChanged(Location location) {
             float speedMPH = location.getSpeed() / 2.236936f;
@@ -32,16 +42,8 @@ public class Speedometer  {
     };
 
     private static final int PERMISSION_REQUEST_CODE = 1000;
+    private AppCompatActivity mAppCompatActivity;
+    private TextView mTextView;
+    private LocationManager mLocationManager;
 
-    public Speedometer(AppCompatActivity appCompatActivity, TextView textView) {
-        mAppCompatActivity = appCompatActivity;
-        mTextView = textView;
-        //Start();
-        if (ActivityCompat.checkSelfPermission(mAppCompatActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            ActivityCompat.requestPermissions(mAppCompatActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
-            return;
-        }
-        mLocationManager = (LocationManager)mAppCompatActivity.getSystemService(Context.LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, mLocationListener);
-    }
 }

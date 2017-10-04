@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCrmzNH40PdnOHc8npMIsmOM4BtmOczEMM"/>
+        <!--  Google Maps Directions API key "AIzaSyD_iJCQ-XVvHJ9qryEycY3Scfb37DWYtg0" -->
         <activity android:name=".MotoFunActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

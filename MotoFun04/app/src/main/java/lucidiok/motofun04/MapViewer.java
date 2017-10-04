@@ -13,7 +13,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 
 /**
  * Created by lucidiok on 10/3/17.
@@ -48,6 +47,9 @@ public class MapViewer implements OnMapReadyCallback {
         mMapFragment.getView().setAlpha(0.5f);
     }
 
+    public void SetDestination(String destination){
+
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         try {
