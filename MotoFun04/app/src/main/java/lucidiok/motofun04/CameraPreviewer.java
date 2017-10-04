@@ -101,49 +101,63 @@ public class CameraPreviewer  {
             mCamera = camera;
 
             try {
-                SurfaceTexture texture = mTextureView.getSurfaceTexture();
-                assert texture != null;
-                texture.setDefaultBufferSize(mImageDimension.getWidth(), mImageDimension.getHeight());
-                Surface surface = new Surface(texture);
-
-                mCaptureRequestBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-                mCaptureRequestBuilder.addTarget(surface);
-
-                mCamera.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
-                    @Override
-                    public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                        if (null == mCamera) {
-                            return;
-                        }
-                        // When the session is ready, we start displaying the preview.
-                        mCameraCaptureSessions = cameraCaptureSession;
-                        updatePreview();
-                    }
-
-                    @Override
-                    public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                        Toast.makeText(mAppCompatActivity, "Configuration change", Toast.LENGTH_SHORT).show();
-                    }
-                }, null);
-
-                Matrix matrix = new Matrix();
-                final float viewWidth = mTextureView.getWidth();
-                final float viewHeight = mTextureView.getHeight();
-                RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
-
-                if (Surface.ROTATION_90 == mDisplayRotation || Surface.ROTATION_270 == mDisplayRotation) {
-                    final float sx = viewHeight / mImageDimension.getWidth();
-                    final float sy = viewWidth / mImageDimension.getHeight();
-                    matrix.postScale(sx, sy, viewRect.centerX(), viewRect.centerY());
-                    matrix.postRotate(90 * (mDisplayRotation - 2), viewRect.centerX(), viewRect.centerY());
-                } else if (Surface.ROTATION_180 == mDisplayRotation) {
-                    matrix.postRotate(180, viewRect.centerX(), viewRect.centerY());
-                }
-                mTextureView.setTransform(matrix);
-                mTextureView.requestLayout();
+                Surface surface = getSurface();
+                createCaptureRequest(surface);
+                createCaptureSession(surface);
+                setImageLayout();
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
+        }
+
+        private void createCaptureRequest(Surface surface) throws CameraAccessException {
+            mCaptureRequestBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mCaptureRequestBuilder.addTarget(surface);
+        }
+
+        @NonNull
+        private Surface getSurface() {
+            SurfaceTexture texture = mTextureView.getSurfaceTexture();
+            assert texture != null;
+            texture.setDefaultBufferSize(mImageDimension.getWidth(), mImageDimension.getHeight());
+            return new Surface(texture);
+        }
+
+        private void setImageLayout() {
+            Matrix matrix = new Matrix();
+            final float viewWidth = mTextureView.getWidth();
+            final float viewHeight = mTextureView.getHeight();
+            RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
+
+            if (Surface.ROTATION_90 == mDisplayRotation || Surface.ROTATION_270 == mDisplayRotation) {
+                final float sx = viewHeight / mImageDimension.getWidth();
+                final float sy = viewWidth / mImageDimension.getHeight();
+                matrix.postScale(sx, sy, viewRect.centerX(), viewRect.centerY());
+                matrix.postRotate(90 * (mDisplayRotation - 2), viewRect.centerX(), viewRect.centerY());
+            } else if (Surface.ROTATION_180 == mDisplayRotation) {
+                matrix.postRotate(180, viewRect.centerX(), viewRect.centerY());
+            }
+            mTextureView.setTransform(matrix);
+            mTextureView.requestLayout();
+        }
+
+        private void createCaptureSession(Surface surface) throws CameraAccessException {
+            mCamera.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                    if (null == mCamera) {
+                        return;
+                    }
+                    // When the session is ready, we start displaying the preview.
+                    mCameraCaptureSessions = cameraCaptureSession;
+                    updatePreview();
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+                    Toast.makeText(mAppCompatActivity, "Configuration change", Toast.LENGTH_SHORT).show();
+                }
+            }, null);
         }
 
         @Override
