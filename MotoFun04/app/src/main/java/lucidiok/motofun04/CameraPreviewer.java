@@ -42,34 +42,20 @@ public class CameraPreviewer  {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     private Size mImageDimension;
-    private Integer mSensorOrientation;
     private int mDisplayRotation;
     private CameraManager mCameraManager;
     private String mCameraId;
 
-    public CameraPreviewer(AppCompatActivity appCompatActivity, TextureView textureView) throws CameraAccessException {
+    public CameraPreviewer(AppCompatActivity appCompatActivity, int textureViewId) throws CameraAccessException {
         mAppCompatActivity = appCompatActivity;
-        mTextureView = textureView;
-        //mTextureView.setSurfaceTextureListener(this);
+        mTextureView = (TextureView)mAppCompatActivity.findViewById(textureViewId);
         mCameraManager = (CameraManager) appCompatActivity.getSystemService(Context.CAMERA_SERVICE);
         mCameraId = getFrontFacingCameraId();
         mCameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraId);
-        mSensorOrientation = mCameraCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
         mImageDimension = getImageDimension();
         mDisplayRotation = appCompatActivity.getWindowManager().getDefaultDisplay().getRotation();
         openSensor();
-
     }
-
-    public void Start() throws CameraAccessException {
-        startBackgroundThread();
-        if (mTextureView.isAvailable()) {
-            openSensor();
-        } else {
-            mTextureView.setSurfaceTextureListener(mTextureListener);
-        }
-    }
-
 
     private void openSensor() throws CameraAccessException {
         if (ActivityCompat.checkSelfPermission(mAppCompatActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -115,8 +101,6 @@ public class CameraPreviewer  {
             mCamera = camera;
 
             try {
-
-
                 SurfaceTexture texture = mTextureView.getSurfaceTexture();
                 assert texture != null;
                 texture.setDefaultBufferSize(mImageDimension.getWidth(), mImageDimension.getHeight());
@@ -138,9 +122,7 @@ public class CameraPreviewer  {
 
                     @Override
                     public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                        Toast.makeText(mAppCompatActivity, "Configurat
-
-ion change", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mAppCompatActivity, "Configuration change", Toast.LENGTH_SHORT).show();
                     }
                 }, null);
 
@@ -185,7 +167,7 @@ ion change", Toast.LENGTH_SHORT).show();
     }
 
     private TextureView.SurfaceTextureListener mTextureListener = new TextureView.SurfaceTextureListener() {
-        @Override //open your camera here
+        @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             try {
                 openSensor();
@@ -193,29 +175,11 @@ ion change", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
-        @Override // Transform you image captured size according tcio the surface width and height
+        @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) { }
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) { return false; }
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
     };
-
-    private void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-    }
-
-    private void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread  = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
