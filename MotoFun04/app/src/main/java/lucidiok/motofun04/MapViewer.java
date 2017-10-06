@@ -13,12 +13,14 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.DirectionsApi;
 
 /**
  * Created by lucidiok on 10/3/17.
  */
 
 public class MapViewer implements OnMapReadyCallback {
+
     private final AppCompatActivity mAppCompatActivity;
     private MapFragment             mMapFragment;
     private GoogleMap               mGoogleMap;
