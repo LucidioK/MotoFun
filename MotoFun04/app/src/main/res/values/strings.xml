@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MotoFun04</string>
+    <string name="done">DONE</string>
+    <string name="dest">DEST</string>
 </resources>

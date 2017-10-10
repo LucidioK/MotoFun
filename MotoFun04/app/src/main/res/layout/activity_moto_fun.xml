@@ -108,4 +108,23 @@
         app:layout_constraintRight_toRightOf="@+id/map"
         app:layout_constraintTop_toTopOf="@+id/image" />
 
+    <EditText
+        android:id="@+id/nextDirectionStep"
+        android:layout_width="433dp"
+        android:layout_height="104dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="8dp"
+        android:elevation="15dp"
+        android:ems="10"
+        android:fontFamily="monospace"
+        android:inputType="textPersonName"
+        android:singleLine="false"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="36sp"
+        android:visibility="invisible"
+        app:layout_constraintLeft_toLeftOf="@+id/image"
+        app:layout_constraintRight_toLeftOf="@+id/speed"
+        app:layout_constraintTop_toTopOf="@+id/image" />
+
 </android.support.constraint.ConstraintLayout>
